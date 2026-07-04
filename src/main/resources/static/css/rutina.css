@@ -1,0 +1,85 @@
+/* ── Rutina IA ─────────────────────────── */
+.rutina-section {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.75rem 2rem;
+    margin-bottom: 2.5rem;
+    position: relative;
+    overflow: hidden;
+}
+.rutina-section::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #b76461, #7c8586, #6f9f93);
+}
+.rutina-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.25rem;
+}
+.rutina-header h2 { font-size: 1.3rem; margin-bottom: .25rem; }
+.rutina-subtitle  { color: var(--text-muted); font-size: .88rem; }
+
+.btn-rutina {
+    background: linear-gradient(135deg, #b76461, #6f7778);
+    color: #fff;
+    border: none;
+    padding: .6rem 1.4rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: opacity .2s, transform .2s;
+}
+.btn-rutina:hover   { opacity: .9; transform: translateY(-1px); }
+.btn-rutina:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+
+/* Loading spinner */
+.rutina-loading {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    color: var(--text-muted);
+    font-size: .95rem;
+    padding: .5rem 0;
+}
+.spinner {
+    width: 20px; height: 20px;
+    border: 2px solid var(--border);
+    border-top-color: #b76461;
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+    flex-shrink: 0;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Content */
+.rutina-content {
+    line-height: 1.75;
+    font-size: .95rem;
+    color: var(--text);
+    border-top: 1px solid var(--border);
+    padding-top: 1.25rem;
+}
+.rutina-content p  { margin-bottom: .75rem; }
+.rutina-content h4,
+.rutina-content h5 { color: #e6aaa6; margin: 1rem 0 .4rem; font-size: 1rem; }
+.rutina-content strong { color: #e6aaa6; }
+
+/* Error */
+.rutina-error {
+    background: rgba(239,68,68,.12);
+    border: 1px solid rgba(239,68,68,.3);
+    color: #b91c1c;
+    padding: .75rem 1rem;
+    border-radius: 8px;
+    font-size: .9rem;
+}
+
+.hidden { display: none !important; }

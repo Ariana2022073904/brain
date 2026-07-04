@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chimp Test - Brain Training Pro</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/chimp.css}">
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-brand">Brain Training Pro</div>
+    <div class="nav-links">
+        <a th:href="@{/menu}" class="nav-link">Menú</a>
+        <a th:href="@{/records}" class="nav-link">Récords</a>
+    </div>
+</nav>
+
+<main class="main-content">
+    <div class="game-header">
+        <h1>Chimp Test</h1>
+        <p>Memoriza los números y tócalos en orden. ¿Hasta cuántos puedes recordar?</p>
+    </div>
+
+    <div class="game-status">
+        <div class="status-box">
+            <span class="status-label">Nivel</span>
+            <span id="lblNivel" class="status-value">4</span>
+        </div>
+        <div class="status-box">
+            <span class="status-label">Mejor</span>
+            <span id="lblMejor" class="status-value">-</span>
+        </div>
+        <div class="status-box">
+            <span class="status-label">Estado</span>
+            <span id="lblEstado" class="status-value">Listo</span>
+        </div>
+    </div>
+
+    <div id="tablero" class="chimp-board"></div>
+
+    <div class="chimp-start-wrap" id="startWrap">
+        <button class="btn btn-primary btn-lg" onclick="iniciarRonda()">Iniciar</button>
+    </div>
+
+    <!-- Modal solo para game over -->
+    <div id="resultModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-icon">Fin</div>
+            <h2>¡Fallaste!</h2>
+            <p id="modalMsg"></p>
+            <div class="modal-buttons">
+                <button class="btn btn-primary" onclick="resetJuego()">Jugar de Nuevo</button>
+                <a th:href="@{/menu}" class="btn btn-secondary">Volver al Menú</a>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script th:src="@{/js/chimp.js}"></script>
+</body>
+</html>

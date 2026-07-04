@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Récords - Brain Training Pro</title>
+
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/menu-visual.css}">
+</head>
+
+<body class="menu-body">
+
+<nav class="navbar-visual">
+
+    <div class="nav-left">
+        <div class="nav-logo">
+            <span class="nav-logo-icon">BT</span>
+            <span class="nav-logo-text">Brain Training Pro</span>
+        </div>
+    </div>
+
+    <div class="nav-center">
+
+        <a th:href="@{/menu}"
+           class="nav-tab"
+           th:classappend="${activePage == 'menu'} ? ' active' : ''">
+            Juegos
+        </a>
+
+        <a th:href="@{/misiones}"
+           class="nav-tab"
+           th:classappend="${activePage == 'misiones'} ? ' active' : ''">
+            Misiones
+        </a>
+
+        <a th:href="@{/records}"
+           class="nav-tab"
+           th:classappend="${activePage == 'records'} ? ' active' : ''">
+            Récords
+        </a>
+
+        <a th:href="@{/stats}"
+           class="nav-tab"
+           th:classappend="${activePage == 'stats'} ? ' active' : ''">
+            Stats
+        </a>
+
+        <a th:href="@{/perfil}"
+           class="nav-tab"
+           th:classappend="${activePage == 'perfil'} ? ' active' : ''">
+            Perfil
+        </a>
+
+    </div>
+
+    <div class="nav-right">
+
+        <div class="nav-user-pill">
+            <span class="nav-avatar"
+                  th:text="${#strings.toUpperCase(#strings.substring(usuario.username,0,1))}">
+            </span>
+
+            <span th:text="${usuario.username}"></span>
+        </div>
+
+        <form th:action="@{/logout}" method="post" style="display:inline">
+            <button type="submit" class="btn-salir">
+                Salir
+            </button>
+        </form>
+
+    </div>
+
+</nav>
+
+<main class="menu-main">
+
+    <div class="section-header">
+
+        <div>
+            <h1 class="section-title">
+                Tabla de Récords
+            </h1>
+
+            <p class="section-hint">
+                Consulta los mejores puntajes registrados por todos los jugadores.
+            </p>
+        </div>
+
+    </div>
+
+    <!-- =================== GLOBAL =================== -->
+
+    <div class="records-section">
+
+        <h2>Récords Globales</h2>
+
+        <div th:if="${todos.empty}" class="empty-state">
+            <p>Aún no hay récords registrados.</p>
+            <p>¡Sé el primero en conseguir uno!</p>
+        </div>
+
+        <div class="table-responsive" th:if="${!todos.empty}">
+
+            <table class="records-table">
+
+                <thead>
+
+                <tr>
+                    <th>#</th>
+                    <th>Jugador</th>
+                    <th>Juego</th>
+                    <th>Dificultad</th>
+                    <th>Puntaje</th>
+                    <th>Fecha</th>
+                </tr>
+
+                </thead>
+
+                <tbody>
+
+                <tr
+                        th:each="r, stat : ${todos}"
+                        th:classappend="${r.usuario.username == usuario.username} ? 'my-record' : ''">
+
+                    <td th:text="${stat.index + 1}"></td>
+
+                    <td>
+
+                        <span th:text="${r.usuario.username}"></span>
+
+                        <span
+                                class="badge-you"
+                                th:if="${r.usuario.username == usuario.username}">
+                            Tú
+                        </span>
+
+                    </td>
+
+                    <td th:text="${r.juego}"></td>
+
+                    <td th:text="${r.dificultad}"></td>
+
+                    <td th:text="${r.puntaje}"></td>
+
+                    <td th:text="${#temporals.format(r.fecha,'dd/MM/yyyy')}"></td>
+
+                </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+    <!-- =================== PERSONALES =================== -->
+
+    <div class="records-section">
+
+        <h2>Mis Récords</h2>
+
+        <div th:if="${misRecords.empty}" class="empty-state">
+            <p>Todavía no tienes récords registrados.</p>
+        </div>
+
+        <div class="table-responsive" th:if="${!misRecords.empty}">
+
+            <table class="records-table">
+
+                <thead>
+
+                <tr>
+
+                    <th>Juego</th>
+                    <th>Dificultad</th>
+                    <th>Puntaje</th>
+                    <th>Fecha</th>
+
+                </tr>
+
+                </thead>
+
+                <tbody>
+
+                <tr th:each="r : ${misRecords}">
+
+                    <td th:text="${r.juego}"></td>
+
+                    <td th:text="${r.dificultad}"></td>
+
+                    <td th:text="${r.puntaje}"></td>
+
+                    <td th:text="${#temporals.format(r.fecha,'dd/MM/yyyy')}"></td>
+
+                </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+    <div class="center-btn">
+
+        <a th:href="@{/menu}" class="btn btn-primary">
+            ← Volver al Menú
+        </a>
+
+    </div>
+
+</main>
+
+</body>
+</html>

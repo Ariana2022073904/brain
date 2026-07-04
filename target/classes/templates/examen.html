@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Examen de Perfil - Brain Training Pro</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/examen.css}">
+</head>
+<body class="auth-page">
+<div class="examen-container">
+    <div class="examen-card">
+        <div class="examen-header">
+            <div class="brain-icon">BT</div>
+            <h1>¡Bienvenido, <span th:text="${usuario.username}"></span>!</h1>
+            <p>Antes de comenzar, cuéntanos un poco sobre ti para personalizar tu experiencia</p>
+        </div>
+
+        <form th:action="@{/examen}" method="post" class="examen-form" id="examenForm">
+
+            <!-- Paso 1: Edad real para perfil -->
+            <div class="paso" id="paso1">
+                <div class="paso-num">01 / 03</div>
+                <h2>¿Cuántos años tienes?</h2>
+                <p class="paso-desc">Esto nos ayuda a asignarte los juegos más adecuados para ti</p>
+                <div class="edad-opciones">
+                    <button type="button" class="edad-btn" onclick="seleccionarEdad(8,  'infantil', this)">5-12 años</button>
+                    <button type="button" class="edad-btn" onclick="seleccionarEdad(15, 'juvenil',  this)">13-17 años</button>
+                    <button type="button" class="edad-btn" onclick="seleccionarEdad(21, 'juvenil',  this)">18-25 años</button>
+                    <button type="button" class="edad-btn" onclick="seleccionarEdad(30, 'adulto',   this)">26-35 años</button>
+                    <button type="button" class="edad-btn" onclick="seleccionarEdad(43, 'adulto',   this)">36-50 años</button>
+                    <button type="button" class="edad-btn" onclick="seleccionarEdad(55, 'adulto',   this)">50+ años</button>
+                </div>
+                <input type="hidden" name="edadPerfil" id="edadPerfil" required>
+                <button type="button" class="btn btn-primary btn-next" onclick="siguiente(1)" disabled id="btn1">Siguiente →</button>
+            </div>
+
+            <!-- Paso 2: Objetivo -->
+            <div class="paso hidden" id="paso2">
+                <div class="paso-num">02 / 03</div>
+                <h2>¿Cuál es tu objetivo principal?</h2>
+                <p class="paso-desc">La IA usará esto para personalizar tus rutinas diarias</p>
+                <div class="objetivo-opciones">
+                    <button type="button" class="objetivo-btn" onclick="seleccionarObjetivo('Mejorar memoria', this)">
+                        Mejorar mi memoria
+                    </button>
+                    <button type="button" class="objetivo-btn" onclick="seleccionarObjetivo('Mejorar concentración', this)">
+                        Mejorar concentración
+                    </button>
+                    <button type="button" class="objetivo-btn" onclick="seleccionarObjetivo('Entrenar lógica y razonamiento', this)">
+                        Entrenar lógica
+                    </button>
+                    <button type="button" class="objetivo-btn" onclick="seleccionarObjetivo('Prevenir deterioro cognitivo', this)">
+                        Prevenir deterioro cognitivo
+                    </button>
+                    <button type="button" class="objetivo-btn" onclick="seleccionarObjetivo('Aprender programación jugando', this)">
+                        Aprender programación
+                    </button>
+                    <button type="button" class="objetivo-btn" onclick="seleccionarObjetivo('Entretenimiento y diversión', this)">
+                        Entretenimiento
+                    </button>
+                </div>
+                <input type="hidden" name="objetivo" id="objetivo" required>
+                <div class="paso-nav">
+                    <button type="button" class="btn btn-secondary" onclick="anterior(2)">← Atrás</button>
+                    <button type="button" class="btn btn-primary btn-next" onclick="siguiente(2)" disabled id="btn2">Siguiente →</button>
+                </div>
+            </div>
+
+            <!-- Paso 3: Nivel de experiencia -->
+            <div class="paso hidden" id="paso3">
+                <div class="paso-num">03 / 03</div>
+                <h2>¿Cuál es tu experiencia con juegos cognitivos?</h2>
+                <p class="paso-desc">Así ajustamos la dificultad inicial para ti</p>
+                <div class="nivel-opciones">
+                    <button type="button" class="nivel-btn" onclick="seleccionarNivel('Principiante', this)">
+                        <span class="nivel-icon">01</span>
+                        <span class="nivel-titulo">Principiante</span>
+                        <span class="nivel-desc">Nunca o casi nunca he jugado juegos cognitivos</span>
+                    </button>
+                    <button type="button" class="nivel-btn" onclick="seleccionarNivel('Intermedio', this)">
+                        <span class="nivel-icon">02</span>
+                        <span class="nivel-titulo">Intermedio</span>
+                        <span class="nivel-desc">Los he jugado algunas veces y me desenvuelvo bien</span>
+                    </button>
+                    <button type="button" class="nivel-btn" onclick="seleccionarNivel('Avanzado', this)">
+                        <span class="nivel-icon">03</span>
+                        <span class="nivel-titulo">Avanzado</span>
+                        <span class="nivel-desc">Los juego regularmente y tengo buen rendimiento</span>
+                    </button>
+                </div>
+                <input type="hidden" name="nivelExperiencia" id="nivelExperiencia" required>
+                <div class="paso-nav">
+                    <button type="button" class="btn btn-secondary" onclick="anterior(3)">← Atrás</button>
+                    <button type="submit" class="btn btn-primary btn-next" id="btn3" disabled>
+                        Ver mis juegos personalizados
+                    </button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+<script>
+function seleccionarEdad(edad, cat, btn) {
+    document.querySelectorAll('.edad-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    document.getElementById('edadPerfil').value = edad;
+    document.getElementById('btn1').disabled = false;
+}
+function seleccionarObjetivo(obj, btn) {
+    document.querySelectorAll('.objetivo-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    document.getElementById('objetivo').value = obj;
+    document.getElementById('btn2').disabled = false;
+}
+function seleccionarNivel(nivel, btn) {
+    document.querySelectorAll('.nivel-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    document.getElementById('nivelExperiencia').value = nivel;
+    document.getElementById('btn3').disabled = false;
+}
+function siguiente(paso) {
+    document.getElementById('paso' + paso).classList.add('hidden');
+    document.getElementById('paso' + (paso + 1)).classList.remove('hidden');
+}
+function anterior(paso) {
+    document.getElementById('paso' + paso).classList.add('hidden');
+    document.getElementById('paso' + (paso - 1)).classList.remove('hidden');
+}
+</script>
+</body>
+</html>

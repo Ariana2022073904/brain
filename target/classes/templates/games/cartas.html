@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memoria Cartas - Brain Training Pro</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/cartas.css}">
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-brand">Brain Training Pro</div>
+    <div class="nav-links">
+        <a th:href="@{/menu}" class="nav-link">Menú</a>
+        <a th:href="@{/records}" class="nav-link">Récords</a>
+    </div>
+</nav>
+
+<main class="main-content">
+    <div class="game-header">
+        <h1>Memoria Cartas</h1>
+        <p>Encuentra todos los pares de cartas con el menor número de intentos</p>
+    </div>
+
+    <div class="game-controls">
+        <label for="dificultad">Dificultad:</label>
+        <select id="dificultad" class="select-control">
+            <option value="Fácil">Fácil (8 pares)</option>
+            <option value="Medio" selected>Medio (12 pares)</option>
+            <option value="Difícil">Difícil (16 pares)</option>
+        </select>
+        <button class="btn btn-primary" onclick="iniciarJuego()">Iniciar</button>
+    </div>
+
+    <div class="game-status">
+        <div class="status-box">
+            <span class="status-label">Intentos</span>
+            <span id="lblIntentos" class="status-value">0</span>
+        </div>
+        <div class="status-box">
+            <span class="status-label">Pares encontrados</span>
+            <span id="lblPares" class="status-value">0</span>
+        </div>
+        <div class="status-box">
+            <span class="status-label">Tiempo</span>
+            <span id="lblTiempo" class="status-value">0s</span>
+        </div>
+    </div>
+
+    <div id="tableroCartas" class="cartas-board"></div>
+
+    <div id="resultModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-icon">OK</div>
+            <h2>¡Completado!</h2>
+            <p id="modalMsg"></p>
+            <div class="modal-buttons">
+                <button class="btn btn-primary" onclick="iniciarJuego(); document.getElementById('resultModal').classList.add('hidden')">Jugar de Nuevo</button>
+                <a th:href="@{/menu}" class="btn btn-secondary">Volver al Menú</a>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script th:src="@{/js/cartas.js}"></script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Torre de Hanoi - Brain Training Pro</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/hanoi.css}">
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-brand">Brain Training Pro</div>
+    <div class="nav-links">
+        <a th:href="@{/menu}" class="nav-link">Menú</a>
+        <a th:href="@{/records}" class="nav-link">Récords</a>
+    </div>
+</nav>
+
+<main class="main-content">
+    <div class="game-header">
+        <h1>Torre de Hanoi</h1>
+        <p>Mueve todos los discos a la Torre C usando el mínimo de movimientos</p>
+    </div>
+
+    <div class="game-controls">
+        <label for="nivel">Nivel:</label>
+        <select id="nivel" class="select-control">
+            <option value="3">Fácil (3 discos)</option>
+            <option value="4" selected>Medio (4 discos)</option>
+            <option value="5">Difícil (5 discos)</option>
+        </select>
+        <button class="btn btn-primary" onclick="iniciarJuego()">Iniciar</button>
+    </div>
+
+    <div class="game-status">
+        <div class="status-box">
+            <span class="status-label">Movimientos</span>
+            <span id="lblMovimientos" class="status-value">0</span>
+        </div>
+        <div class="status-box">
+            <span class="status-label">Mínimo posible</span>
+            <span id="lblMinimo" class="status-value">7</span>
+        </div>
+        <div class="status-box">
+            <span class="status-label">Info</span>
+            <span id="lblInfo" class="status-value">Selecciona origen</span>
+        </div>
+    </div>
+
+    <div class="hanoi-container">
+        <div class="torre" id="torreA" onclick="clickTorre('A')">
+            <div class="torre-label">Torre A</div>
+            <div class="torre-palo"></div>
+            <div class="torre-base"></div>
+            <div id="discosA" class="discos-container"></div>
+        </div>
+        <div class="torre" id="torreB" onclick="clickTorre('B')">
+            <div class="torre-label">Torre B</div>
+            <div class="torre-palo"></div>
+            <div class="torre-base"></div>
+            <div id="discosB" class="discos-container"></div>
+        </div>
+        <div class="torre" id="torreC" onclick="clickTorre('C')">
+            <div class="torre-label">Torre C</div>
+            <div class="torre-palo"></div>
+            <div class="torre-base"></div>
+            <div id="discosC" class="discos-container"></div>
+        </div>
+    </div>
+
+    <div id="resultModal" class="modal hidden">
+        <div class="modal-content">
+            <div id="modalIcon" class="modal-icon"></div>
+            <h2 id="modalTitle"></h2>
+            <p id="modalMsg"></p>
+            <div class="modal-buttons">
+                <button class="btn btn-primary" onclick="iniciarJuego(); document.getElementById('resultModal').classList.add('hidden')">Jugar de Nuevo</button>
+                <a th:href="@{/menu}" class="btn btn-secondary">Volver al Menú</a>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script th:src="@{/js/hanoi.js}"></script>
+</body>
+</html>

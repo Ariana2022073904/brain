@@ -1,0 +1,85 @@
+/* ── Stats Page ─────────────────────────── */
+.stats-section {
+    margin-bottom: 3rem;
+}
+.stats-section h2 {
+    font-size: 1.4rem;
+    margin-bottom: .3rem;
+}
+.stats-desc {
+    color: var(--text-muted);
+    font-size: .88rem;
+    margin-bottom: 1.25rem;
+}
+.charts-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.25rem;
+}
+.chart-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+}
+.chart-card-wide {
+    grid-column: 1 / -1;
+}
+.chart-card h3 {
+    font-size: 1rem;
+    margin-bottom: .75rem;
+    color: #e6aaa6;
+}
+.chart-canvas {
+    position: relative;
+    height: 280px;
+    width: 100%;
+}
+.chart-card-wide .chart-canvas {
+    height: 360px;
+}
+.chart-canvas canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+.chart-note {
+    font-size: .75rem;
+    color: var(--text-muted);
+    text-align: center;
+    margin-top: .5rem;
+}
+.no-data {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: .9rem;
+    padding: 2rem 0;
+}
+.agilidad-tabla {
+    margin-top: 1.25rem;
+    overflow-x: auto;
+}
+.tabla-agilidad {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .9rem;
+}
+.tabla-agilidad th,
+.tabla-agilidad td {
+    padding: .6rem .9rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+}
+.tabla-agilidad th {
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: .8rem;
+    text-transform: uppercase;
+}
+.tabla-agilidad tbody tr:hover {
+    background: var(--card);
+}
+.nav-active {
+    background: var(--primary);
+    color: #fff !important;
+    font-weight: 600;
+}

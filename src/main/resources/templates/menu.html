@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menú - Brain Training Pro</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/menu-nuevo.css}">
+    <link rel="stylesheet" th:href="@{/css/menu-visual.css}">
+</head>
+<body class="menu-body">
+
+<!-- NAVBAR -->
+<nav class="navbar-visual">
+    <div class="nav-left">
+        <div class="nav-logo">
+            <span class="nav-logo-icon">BT</span>
+            <span class="nav-logo-text">Brain Training Pro</span>
+        </div>
+    </div>
+    <div class="nav-center">
+        <a th:href="@{/menu}"     class="nav-tab active">Juegos</a>
+        <a th:href="@{/misiones}" class="nav-tab">Misiones</a>
+        <a th:href="@{/records}"  class="nav-tab">Récords</a>
+        <a th:href="@{/stats}"    class="nav-tab">Stats</a>
+    </div>
+    <div class="nav-right">
+        <div class="nav-user-pill">
+            <span class="nav-avatar" th:text="${#strings.toUpperCase(#strings.substring(usuario.username,0,1))}"></span>
+            <span th:text="${usuario.username}"></span>
+        </div>
+        <form th:action="@{/logout}" method="post" style="display:inline">
+            <button type="submit" class="btn-salir">Salir</button>
+        </form>
+    </div>
+</nav>
+
+<!-- HERO HEADER -->
+<div class="menu-hero">
+    <div class="hero-text">
+        <h1>Hola, <span th:text="${usuario.username}"></span></h1>
+        <p>
+            <span class="pill pill-categoria" th:text="${perfil != null ? perfil.categoria : 'general'}"></span>
+            <span class="pill pill-objetivo"  th:text="${perfil != null ? perfil.objetivo  : ''}"></span>
+        </p>
+    </div>
+    <div class="hero-stats">
+        <div class="hero-stat">
+            <span class="hero-stat-num" th:text="${misRecords.size()}">0</span>
+            <span class="hero-stat-lbl">récords</span>
+        </div>
+        <div class="hero-stat">
+            <span class="hero-stat-num" th:text="${misJuegos.size()}">0</span>
+            <span class="hero-stat-lbl">juegos</span>
+        </div>
+    </div>
+</div>
+
+<!-- JUEGOS GRID -->
+<main class="menu-main">
+    <div class="section-header">
+        <h2 class="section-title">Mis Juegos</h2>
+        <span class="section-hint">Usa el control de cada tarjeta para activar o desactivar</span>
+    </div>
+
+    <div class="visual-games-grid" th:if="${!misJuegos.empty}">
+        <div th:each="ju : ${misJuegos}"
+             class="vgame-card"
+             th:classappend="${!ju.activo} ? ' vgame-off' : ''">
+
+            <!-- imagen del juego -->
+            <div class="vgame-img-wrap">
+                <img th:src="@{/images/juegos/{n}.png(n=${#strings.replace(ju.juego.nombre,' ','_')})}"
+                     th:alt="${ju.juego.nombre}"
+                     class="vgame-img"
+                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                <div class="vgame-emoji-fallback" style="display:none"
+                     th:text="${ju.juego.icono}"></div>
+
+                <!-- badge inactivo -->
+                <div class="vgame-badge-off" th:if="${!ju.activo}">Inactivo</div>
+
+                <!-- botón toggle -->
+                <button class="vgame-toggle"
+                        th:classappend="${ju.activo} ? ' tog-on' : ' tog-off'"
+                        th:data-id="${ju.juego.id}"
+                        onclick="toggleJuego(this)"
+                        th:title="${ju.activo} ? 'Desactivar' : 'Activar'">
+                    <span th:text="${ju.activo} ? 'On' : 'Off'"></span>
+                </button>
+            </div>
+
+            <!-- info -->
+            <div class="vgame-body">
+                <div class="vgame-tag" th:text="${ju.juego.habilidad}"></div>
+                <h3 class="vgame-title" th:text="${ju.juego.nombre}"></h3>
+                <p class="vgame-desc" th:text="${ju.juego.descripcion}"></p>
+
+                <div class="vgame-footer">
+                    <a th:href="${ju.activo} ? ${ju.juego.url} : '#'"
+                       th:data-url="${ju.juego.url}"
+                       class="vgame-btn-play"
+                       th:classappend="${!ju.activo} ? ' vgame-btn-disabled' : ''">
+                        ▶ Jugar
+                    </a>
+                    <button class="vgame-btn-ia"
+                            th:data-juego="${ju.juego.nombre}"
+                            th:data-habilidad="${ju.juego.habilidad}"
+                            onclick="mostrarAyudaIA(this.dataset.juego, this.dataset.habilidad)">
+                        ¿Me ayuda?
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${misJuegos.empty}" class="empty-visual">
+        <div class="empty-icon">BT</div>
+        <p>No tienes juegos asignados.</p>
+        <a th:href="@{/examen}" class="btn-primary-v">Hacer examen de perfil</a>
+    </div>
+
+    <!-- Récords recientes -->
+    <div class="records-mini" th:if="${!misRecords.empty}">
+        <h2 class="section-title" style="margin-bottom:1rem">Mis Mejores Marcas</h2>
+        <div class="records-mini-grid">
+            <div class="record-chip" th:each="r : ${misRecords}">
+                <span class="record-chip-juego" th:text="${r.juego}"></span>
+                <span class="record-chip-pts"   th:text="${r.puntaje} + ' pts'"></span>
+                <span class="record-chip-dif"   th:text="${r.dificultad}"></span>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- MODAL IA -->
+<div id="modalIA" class="modal-v hidden">
+    <div class="modal-v-content">
+        <button class="modal-v-close" onclick="cerrarModalIA()">✕</button>
+        <div class="modal-v-icon">IA</div>
+        <h2 id="modalIATitulo" class="modal-v-title"></h2>
+        <div id="modalIALoading" class="modal-v-loading">
+            <div class="spinner"></div>
+            <span>Consultando IA...</span>
+        </div>
+        <div id="modalIAContenido" class="modal-v-texto hidden"></div>
+        <button class="modal-v-btn" onclick="cerrarModalIA()">Entendido</button>
+    </div>
+</div>
+
+<script>
+function toggleJuego(btn) {
+    const id   = btn.dataset.id;
+    const card = btn.closest('.vgame-card');
+    fetch('/juegos/toggle/' + id, { method: 'POST' })
+        .then(r => r.json())
+        .then(data => {
+            const activo = data.activo;
+            card.classList.toggle('vgame-off', !activo);
+            btn.classList.toggle('tog-on',  activo);
+            btn.classList.toggle('tog-off', !activo);
+            btn.querySelector('span').textContent = activo ? 'On' : 'Off';
+            const badge = card.querySelector('.vgame-badge-off');
+            if (badge) badge.style.display = activo ? 'none' : 'flex';
+            const link = card.querySelector('.vgame-btn-play');
+            if (activo) {
+                link.classList.remove('vgame-btn-disabled');
+                link.setAttribute('href', link.dataset.url);
+            } else {
+                link.classList.add('vgame-btn-disabled');
+                link.setAttribute('href', '#');
+            }
+        });
+}
+
+function mostrarAyudaIA(nombre, habilidad) {
+    document.getElementById('modalIA').classList.remove('hidden');
+    document.getElementById('modalIATitulo').textContent = nombre;
+    document.getElementById('modalIALoading').classList.remove('hidden');
+    document.getElementById('modalIAContenido').classList.add('hidden');
+    document.getElementById('modalIAContenido').innerHTML = '';
+
+    fetch('/api/ayuda-juego', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ juego: nombre, habilidad: habilidad })
+    })
+    .then(r => r.json())
+    .then(data => {
+        document.getElementById('modalIALoading').classList.add('hidden');
+        const cont = document.getElementById('modalIAContenido');
+        const texto = (data.texto || '').replace(/<[^>]+>/g,'').trim();
+        cont.innerHTML = texto.split('\n').filter(l=>l.trim()).map(l=>`<p>${l}</p>`).join('') || `<p>${getFallback(nombre,habilidad)}</p>`;
+        cont.classList.remove('hidden');
+    })
+    .catch(() => {
+        document.getElementById('modalIALoading').classList.add('hidden');
+        const cont = document.getElementById('modalIAContenido');
+        cont.innerHTML = `<p>${getFallback(nombre, habilidad)}</p>`;
+        cont.classList.remove('hidden');
+    });
+}
+
+function getFallback(nombre, habilidad) {
+    const f = {
+        'Chimp Test':     'Entrena tu memoria de trabajo visual a corto plazo. Al memorizar posiciones rápidamente ejercitas la corteza prefrontal. Recomendación: intenta no pestañear mientras ves los números.',
+        'Torre de Hanoi': 'Ejercita tus funciones ejecutivas: planificación y resolución de problemas. Usada en neuropsicología para evaluar el lóbulo frontal. Recomendación: visualiza los próximos 3 movimientos antes de actuar.',
+        'Memoria Cartas': 'Fortalece tu memoria episódica visual y refuerza conexiones entre el hipocampo y la corteza visual. Recomendación: agrupa las cartas por zonas del tablero.',
+        'Pupiletras':     'Mejora tu atención selectiva y velocidad de procesamiento visual. Recomendación: escanea fila por fila en lugar de buscar aleatoriamente.',
+        'Crucigrama':     'Activa tu memoria semántica y vocabulario. Recomendación: empieza por las palabras más cortas para ganar contexto.',
+        'Buscaminas':     'Entrena tu razonamiento lógico-deductivo. Recomendación: marca las minas confirmadas antes de continuar.',
+        'Code Runner':    'Desarrolla tu pensamiento computacional y lógica secuencial. Recomendación: lee el laberinto completo antes de escribir tu solución.'
+    };
+    return f[nombre] || `${nombre} entrena tu ${habilidad}. Practicarlo regularmente fortalece las conexiones neuronales.`;
+}
+
+function cerrarModalIA() {
+    document.getElementById('modalIA').classList.add('hidden');
+}
+</script>
+</body>
+</html>

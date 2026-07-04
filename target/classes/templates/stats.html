@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estadísticas - Brain Training Pro</title>
+
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/menu-visual.css}">
+    <link rel="stylesheet" th:href="@{/css/stats.css}">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+
+<body class="menu-body">
+
+<nav class="navbar-visual">
+
+    <div class="nav-left">
+
+        <div class="nav-logo">
+            <span class="nav-logo-icon">BT</span>
+            <span class="nav-logo-text">Brain Training Pro</span>
+        </div>
+
+    </div>
+
+    <div class="nav-center">
+
+        <a th:href="@{/menu}" class="nav-tab">
+            Juegos
+        </a>
+
+        <a th:href="@{/misiones}" class="nav-tab">
+            Misiones
+        </a>
+
+        <a th:href="@{/records}" class="nav-tab">
+            Récords
+        </a>
+
+        <a th:href="@{/stats}" class="nav-tab active">
+            Stats
+        </a>
+
+        <a th:href="@{/perfil}" class="nav-tab">
+            Perfil
+        </a>
+
+    </div>
+
+    <div class="nav-right">
+
+        <div class="nav-user-pill">
+
+            <span class="nav-avatar"
+                  th:text="${#strings.substring(usuario.username,0,1).toUpperCase()}">
+            </span>
+
+            <span th:text="${usuario.username}"></span>
+
+        </div>
+
+        <form th:action="@{/logout}" method="post">
+
+            <button type="submit" class="btn-salir">
+                Salir
+            </button>
+
+        </form>
+
+    </div>
+
+</nav>
+
+<main class="menu-main">
+
+    <div class="section-header">
+
+        <div>
+
+            <h1 class="section-title">
+                Estadísticas y Análisis
+            </h1>
+
+            <p class="section-hint">
+                Visualiza tu rendimiento, evolución y posición respecto a los demás jugadores.
+            </p>
+
+        </div>
+
+    </div>
+
+    <!-- PROGRESO -->
+
+    <section class="stats-section">
+
+        <h2>Mi Progreso</h2>
+
+        <div class="charts-row">
+
+            <div class="chart-card">
+                <h3>Chimp Test</h3>
+                <canvas id="chartChimp"></canvas>
+            </div>
+
+            <div class="chart-card">
+                <h3>Torre de Hanoi</h3>
+                <canvas id="chartHanoi"></canvas>
+            </div>
+
+            <div class="chart-card">
+                <h3>Memoria de Cartas</h3>
+                <canvas id="chartCartas"></canvas>
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- RANKING -->
+
+    <section class="stats-section">
+
+        <h2>Ranking Global</h2>
+
+        <div class="chart-card chart-card-wide">
+
+            <canvas id="chartRanking"></canvas>
+
+        </div>
+
+    </section>
+
+    <!-- EDAD -->
+
+    <section class="stats-section">
+
+        <h2>Rendimiento por Edad</h2>
+
+        <div class="charts-row">
+
+            <div class="chart-card">
+                <canvas id="chartEdad"></canvas>
+            </div>
+
+            <div class="chart-card">
+                <canvas id="chartEdadCount"></canvas>
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- AGILIDAD -->
+
+    <section class="stats-section">
+
+        <h2>Índice de Agilidad Cerebral</h2>
+
+        <div class="chart-card chart-card-wide">
+
+            <canvas id="chartAgilidad"></canvas>
+
+        </div>
+
+        <div id="tablaAgilidad"></div>
+
+    </section>
+
+</main>
+
+<script>
+    
+    const COLORS = [
+    '#b76461',
+    '#6f9f93',
+    '#d3914b',
+    '#ef4444',
+    '#6f8991',
+    '#7c8586',
+    '#c47773',
+    '#84cc16'
+];
+
+const chartDefaults = {
+    responsive: true,
+    maintainAspectRatio: false,
+
+    plugins: {
+        legend: {
+            labels: {
+                color: '#4d5a5a',
+                font: {
+                    size: 12
+                }
+            }
+        }
+    },
+
+    scales: {
+
+        x: {
+            ticks: {
+                color: '#758181'
+            },
+            grid: {
+                color: '#e2e8e6'
+            }
+        },
+
+        y: {
+            ticks: {
+                color: '#758181'
+            },
+            grid: {
+                color: '#e2e8e6'
+            }
+        }
+
+    }
+
+};
+
+
+/* =====================================================
+   PROGRESO PERSONAL
+===================================================== */
+
+fetch('/stats/api/progreso-personal')
+
+.then(function(response){return response.json();})
+
+.then(function(data){
+
+    crearGraficoProgreso(
+        "chartChimp",
+        data["Chimp"],
+        "#b76461",
+        false
+    );
+
+    crearGraficoProgreso(
+        "chartHanoi",
+        data["Hanoi"],
+        "#f59e0b",
+        true
+    );
+
+    crearGraficoProgreso(
+        "chartCartas",
+        data["Cartas"],
+        "#22c55e",
+        true
+    );
+
+});
+
+
+function crearGraficoProgreso(canvas,data,color,invertido){
+
+    const elemento=document.getElementById(canvas);
+
+    if(!elemento){
+        return;
+    }
+
+    if(!data || !data.fechas || data.fechas.length===0){
+
+        elemento.parentElement.insertAdjacentHTML(
+            "beforeend",
+            "<p class='no-data'>Sin datos aún</p>"
+        );
+
+        elemento.remove();
+
+        return;
+
+    }
+
+    new Chart(elemento,{
+
+        type:"line",
+
+        data:{
+
+            labels:data.fechas,
+
+            datasets:[{
+
+                label:"Puntaje",
+
+                data:data.puntajes,
+
+                borderColor:color,
+
+                backgroundColor:color+"33",
+
+                fill:true,
+
+                tension:.35,
+
+                pointRadius:5,
+
+                pointBackgroundColor:color
+
+            }]
+
+        },
+
+        options:Object.assign({},chartDefaults,{
+
+            plugins:Object.assign({},chartDefaults.plugins,{
+
+                tooltip:{
+
+                    callbacks:{
+
+                        afterLabel:function(){
+                            if(invertido){
+                                return "Mientras menor mejor";
+                            } else {
+                                return "Mientras mayor mejor";
+                            }
+                        }
+
+                    }
+
+                }
+
+            })
+
+        })
+
+    });
+
+}
+
+
+/* =====================================================
+   RANKING GLOBAL
+===================================================== */
+
+fetch("/stats/api/ranking-global")
+
+.then(function(response){return response.json();})
+
+.then(function(data){
+
+    const juegos=Object.keys(data);
+
+    if(juegos.length===0){
+
+        document.getElementById("chartRanking")
+        .parentElement
+        .innerHTML+="<p class='no-data'>No existen registros.</p>";
+
+        return;
+
+    }
+
+    const datasets=[];
+
+    juegos.forEach(function(juego,index){
+
+        datasets.push({
+
+            label:juego,
+
+            data:data[juego].puntajes,
+
+            backgroundColor:COLORS[index]+"cc",
+
+            borderColor:COLORS[index],
+
+            borderWidth:2
+
+        });
+
+    });
+
+    new Chart(
+
+        document.getElementById("chartRanking"),
+
+        {
+
+            type:"bar",
+
+            data:{
+
+                labels:data[juegos[0]].jugadores,
+
+                datasets:datasets
+
+            },
+
+            options:chartDefaults
+
+        }
+
+    );
+
+});
+
+
+/* =====================================================
+   RENDIMIENTO POR EDAD
+===================================================== */
+
+fetch("/stats/api/por-edad")
+
+.then(function(response){return response.json();})
+
+.then(function(data){
+
+    new Chart(
+
+        document.getElementById("chartEdad"),
+
+        {
+            type:"bar",
+
+            data:{
+                labels:data.labels,
+                datasets:[{
+                    label:"Puntaje promedio",
+                    data:data.promedios,
+                    backgroundColor:COLORS[0]+"cc",
+                    borderColor:COLORS[0],
+                    borderWidth:2
+                }]
+            },
+
+            options:chartDefaults
+        }
+
+    );
+
+    new Chart(
+
+        document.getElementById("chartEdadCount"),
+
+        {
+            type:"bar",
+
+            data:{
+                labels:data.labels,
+                datasets:[{
+                    label:"Cantidad de jugadores",
+                    data:data.cantidad,
+                    backgroundColor:COLORS[1]+"cc",
+                    borderColor:COLORS[1],
+                    borderWidth:2
+                }]
+            },
+
+            options:chartDefaults
+        }
+
+    );
+
+});
+
+
+/* =====================================================
+   AGILIDAD CEREBRAL
+===================================================== */
+
+fetch("/stats/api/agilidad")
+
+.then(function(response){return response.json();})
+
+.then(function(data){
+
+    if(!data.ranking || data.ranking.length===0){
+
+        document.getElementById("chartAgilidad")
+        .parentElement
+        .insertAdjacentHTML("beforeend","<p class='no-data'>No existen registros.</p>");
+
+    } else {
+
+        new Chart(
+
+            document.getElementById("chartAgilidad"),
+
+            {
+                type:"bar",
+
+                data:{
+                    labels:data.labels,
+                    datasets:[{
+                        label:"Índice de agilidad",
+                        data:data.scores,
+                        backgroundColor:COLORS[2]+"cc",
+                        borderColor:COLORS[2],
+                        borderWidth:2
+                    }]
+                },
+
+                options:Object.assign({},chartDefaults,{
+                    indexAxis:"y"
+                })
+            }
+
+        );
+
+    }
+
+    const tabla=document.getElementById("tablaAgilidad");
+
+    if(data.ranking && data.ranking.length>0){
+
+        let html="<table class='tabla-agilidad'><thead><tr>"
+            +"<th>#</th><th>Jugador</th><th>Edad</th><th>Score</th><th>Partidas</th>"
+            +"</tr></thead><tbody>";
+
+        data.ranking.forEach(function(fila,i){
+            html+="<tr><td>"+(i+1)+"</td><td>"+fila.usuario+"</td><td>"+fila.edad+"</td>"
+                +"<td>"+fila.score+"</td><td>"+fila.partidas+"</td></tr>";
+        });
+
+        html+="</tbody></table>";
+
+        tabla.innerHTML=html;
+
+    }
+
+});
+
+</script>
+
+</body>
+</html>

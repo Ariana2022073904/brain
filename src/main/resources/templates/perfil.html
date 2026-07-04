@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Perfil - Brain Training Pro</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/menu-visual.css}">
+</head>
+<body class="menu-body">
+
+<!-- pega aquí el mismo navbar común -->
+
+<main class="menu-main">
+    <div class="section-header">
+        <h2 class="section-title">Personalizar Perfil</h2>
+    </div>
+
+    <form th:action="@{/perfil}" method="post" class="auth-card" style="max-width:620px">
+        <div class="form-group">
+            <label>Email</label>
+            <input type="email" name="email" th:value="${usuario.email}" required>
+        </div>
+
+        <div class="form-group">
+            <label>Edad</label>
+            <input type="number" name="edad" th:value="${usuario.edad}" min="5" max="120" required>
+        </div>
+
+        <div class="form-group">
+            <label>Objetivo</label>
+            <select name="objetivo" class="select-control" required>
+                <option th:selected="${perfil.objetivo == 'Mejorar memoria'}">Mejorar memoria</option>
+                <option th:selected="${perfil.objetivo == 'Mejorar concentración'}">Mejorar concentración</option>
+                <option th:selected="${perfil.objetivo == 'Entrenar lógica y razonamiento'}">Entrenar lógica y razonamiento</option>
+                <option th:selected="${perfil.objetivo == 'Prevenir deterioro cognitivo'}">Prevenir deterioro cognitivo</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Nivel de experiencia</label>
+            <select name="nivelExperiencia" class="select-control" required>
+                <option th:selected="${perfil.nivelExperiencia == 'Principiante'}">Principiante</option>
+                <option th:selected="${perfil.nivelExperiencia == 'Intermedio'}">Intermedio</option>
+                <option th:selected="${perfil.nivelExperiencia == 'Avanzado'}">Avanzado</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Guardar cambios</button>
+
+        <div th:if="${param.ok}" class="alert alert-success" style="margin-top:1rem">
+            Perfil actualizado correctamente.
+        </div>
+    </form>
+</main>
+
+</body>
+</html>

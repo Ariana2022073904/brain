@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Brain Training Pro</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-brand">Brain Training Pro — Admin</div>
+    <div class="nav-links">
+        <a th:href="@{/menu}" class="nav-link">Menú</a>
+        <form th:action="@{/logout}" method="post" style="display:inline">
+            <button type="submit" class="btn btn-logout">Salir</button>
+        </form>
+    </div>
+</nav>
+
+<main class="main-content">
+    <h1 class="page-title">Panel de Administración</h1>
+
+    <!-- Stats cards -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon">Usuarios</div>
+            <div class="stat-value" th:text="${totalUsuarios}">0</div>
+            <div class="stat-label">Usuarios registrados</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">Récords</div>
+            <div class="stat-value" th:text="${totalRecords}">0</div>
+            <div class="stat-label">Récords guardados</div>
+        </div>
+    </div>
+
+    <!-- Users table -->
+    <div class="admin-section">
+        <h2>Usuarios</h2>
+        <table class="records-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Usuario</th>
+                    <th>Email</th>
+                    <th>Edad</th>
+                    <th>Rol</th>
+                    <th>Registro</th>
+                    <th>Acción</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="u : ${usuarios}">
+                    <td th:text="${u.id}"></td>
+                    <td th:text="${u.username}"></td>
+                    <td th:text="${u.email}"></td>
+                    <td th:text="${u.edad}"></td>
+                    <td>
+                        <span class="badge" th:classappend="${u.rol.name() == 'admin'} ? 'badge-admin' : 'badge-user'"
+                              th:text="${u.rol}"></span>
+                    </td>
+                    <td th:text="${#temporals.format(u.fechaReg, 'dd/MM/yyyy')}"></td>
+                    <td>
+                        <form th:action="@{/admin/usuarios/eliminar/{id}(id=${u.id})}" method="post"
+                              onsubmit="return confirm('¿Eliminar usuario?')">
+                            <button type="submit" class="btn btn-danger btn-sm"
+                                    th:disabled="${u.rol.name() == 'admin'}">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Records table -->
+    <div class="admin-section">
+        <h2>Récords</h2>
+        <table class="records-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Usuario</th>
+                    <th>Juego</th>
+                    <th>Dificultad</th>
+                    <th>Puntaje</th>
+                    <th>Fecha</th>
+                    <th>Acción</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="r : ${records}">
+                    <td th:text="${r.id}"></td>
+                    <td th:text="${r.usuario.username}"></td>
+                    <td th:text="${r.juego}"></td>
+                    <td th:text="${r.dificultad}"></td>
+                    <td th:text="${r.puntaje}"></td>
+                    <td th:text="${#temporals.format(r.fecha, 'dd/MM/yyyy')}"></td>
+                    <td>
+                        <form th:action="@{/admin/records/eliminar/{id}(id=${r.id})}" method="post"
+                              onsubmit="return confirm('¿Eliminar récord?')">
+                            <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+
+</body>
+</html>

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Misiones - Brain Training Pro</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/menu-visual.css}">
+    <link rel="stylesheet" th:href="@{/css/misiones.css}">
+</head>
+<body class="menu-body">
+
+<nav class="navbar-visual">
+    <div class="nav-left">
+        <div class="nav-logo">
+            <span class="nav-logo-icon">BT</span>
+            <span class="nav-logo-text">Brain Training Pro</span>
+        </div>
+    </div>
+
+    <div class="nav-center">
+        <a th:href="@{/menu}" class="nav-tab" th:classappend="${activePage == 'menu'} ? ' active' : ''">Juegos</a>
+        <a th:href="@{/misiones}" class="nav-tab" th:classappend="${activePage == 'misiones'} ? ' active' : ''">Misiones</a>
+        <a th:href="@{/records}" class="nav-tab" th:classappend="${activePage == 'records'} ? ' active' : ''">Récords</a>
+        <a th:href="@{/stats}" class="nav-tab" th:classappend="${activePage == 'stats'} ? ' active' : ''">Stats</a>
+        <a th:href="@{/perfil}" class="nav-tab" th:classappend="${activePage == 'perfil'} ? ' active' : ''">Perfil</a>
+    </div>
+
+    <div class="nav-right">
+        <div class="nav-user-pill">
+            <span class="nav-avatar" th:text="${#strings.toUpperCase(#strings.substring(usuario.username,0,1))}"></span>
+            <span th:text="${usuario.username}"></span>
+        </div>
+        <form th:action="@{/logout}" method="post" style="display:inline">
+            <button type="submit" class="btn-salir">Salir</button>
+        </form>
+    </div>
+</nav>
+
+<main class="menu-main">
+    <div class="misiones-header">
+        <div>
+            <h1>Misiones del Día</h1>
+            <p class="misiones-fecha" th:text="${hoy}"></p>
+        </div>
+        <button id="btnGenerar" class="btn btn-rutina" onclick="generarMisiones()">
+            Generar misiones de hoy
+        </button>
+    </div>
+
+    <div class="progreso-bar-wrap" th:if="${tieneMision}">
+        <div class="progreso-info">
+            <span>Progreso de hoy</span>
+            <span id="lblProgreso" th:text="${totalCompletadas} + ' / ' + ${totalItems}"></span>
+        </div>
+        <div class="progreso-bar">
+            <div class="progreso-fill" id="progresoFill"
+                 th:style="'width:' + (${totalItems} > 0 ? (${totalCompletadas} * 100 / ${totalItems}) : 0) + '%'"></div>
+        </div>
+    </div>
+
+    <div id="misionesLoading" class="rutina-loading hidden">
+        <div class="spinner"></div>
+        <span>La IA está creando tus misiones de hoy...</span>
+    </div>
+
+    <div id="misionesError" class="rutina-error hidden">
+        <span id="misionesErrorMsg"></span>
+    </div>
+
+    <div id="listaMisiones" class="misiones-lista">
+        <div th:if="${!tieneMision}" class="misiones-empty">
+            <div class="empty-icon">BT</div>
+            <p>Aún no tienes misiones para hoy.</p>
+            <p>Presiona <strong>"Generar misiones de hoy"</strong> para crear tu plan personalizado.</p>
+        </div>
+
+        <div th:if="${tieneMision}">
+            <div th:each="item, stat : ${items}"
+                 class="mision-item"
+                 th:classappend="${completadas.contains(stat.index)} ? ' completada' : ''"
+                 th:data-index="${stat.index}"
+                 th:onclick="'toggleMision(' + ${stat.index} + ', this)'">
+                <div class="mision-check">
+                    <span class="check-icon" th:text="${completadas.contains(stat.index)} ? '✓' : '□'"></span>
+                </div>
+                <div class="mision-texto" th:text="${item}"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="felicitacion" class="felicitacion hidden">
+        Completaste todas las misiones de hoy. Excelente trabajo.
+    </div>
+
+    <div class="center-btn" style="margin-top:1.5rem">
+        <a th:href="@{/menu}" class="btn btn-secondary">← Volver al Menú</a>
+    </div>
+</main>
+
+<script th:inline="javascript">
+    let totalItems = [[${totalItems}]];
+    let totalComp = [[${totalCompletadas}]];
+    const tieneMision = [[${tieneMision}]];
+
+    if (tieneMision && totalItems > 0 && totalComp >= totalItems) {
+        document.getElementById('felicitacion').classList.remove('hidden');
+    }
+
+    function generarMisiones() {
+        const btn = document.getElementById('btnGenerar');
+        const loading = document.getElementById('misionesLoading');
+        const error = document.getElementById('misionesError');
+
+        btn.disabled = true;
+        btn.textContent = 'Generando...';
+        loading.classList.remove('hidden');
+        error.classList.add('hidden');
+
+        fetch('/api/misiones/generar', { method: 'POST' })
+            .then(r => r.json())
+            .then(data => {
+                loading.classList.add('hidden');
+                btn.disabled = false;
+                btn.textContent = 'Regenerar';
+
+                if (data.status === 'ok') {
+                    totalItems = data.items.length;
+                    totalComp = data.completadas.size || Object.keys(data.completadas).length || 0;
+                    renderMisiones(data.items, data.completadas);
+                    actualizarProgreso();
+                } else {
+                    document.getElementById('misionesErrorMsg').textContent = data.msg;
+                    error.classList.remove('hidden');
+                }
+            })
+            .catch(() => {
+                loading.classList.add('hidden');
+                btn.disabled = false;
+                btn.textContent = 'Generar misiones de hoy';
+                document.getElementById('misionesErrorMsg').textContent = 'Error de conexión.';
+                error.classList.remove('hidden');
+            });
+    }
+
+    function renderMisiones(items, completadas) {
+        const lista = document.getElementById('listaMisiones');
+        const compSet = new Set(Array.isArray(completadas) ? completadas : Object.values(completadas));
+
+        lista.innerHTML = items.map((item, idx) => `
+            <div class="mision-item ${compSet.has(idx) ? 'completada' : ''}"
+                 data-index="${idx}"
+                 onclick="toggleMision(${idx}, this)">
+                <div class="mision-check">
+                    <span class="check-icon">${compSet.has(idx) ? '✓' : '□'}</span>
+                </div>
+                <div class="mision-texto">${escapeHtml(item)}</div>
+            </div>
+        `).join('');
+    }
+
+    function toggleMision(index, el) {
+        fetch('/api/misiones/toggle', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ index: index })
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.status === 'ok') {
+                const completada = data.completada;
+                el.classList.toggle('completada', completada);
+                el.querySelector('.check-icon').textContent = completada ? '✓' : '□';
+                totalComp += completada ? 1 : -1;
+                actualizarProgreso();
+            }
+        });
+    }
+
+    function actualizarProgreso() {
+        const pct = totalItems > 0 ? (totalComp / totalItems * 100) : 0;
+        const fill = document.getElementById('progresoFill');
+        const lbl = document.getElementById('lblProgreso');
+
+        if (fill) fill.style.width = pct + '%';
+        if (lbl) lbl.textContent = totalComp + ' / ' + totalItems;
+
+        const fel = document.getElementById('felicitacion');
+        if (fel) fel.classList.toggle('hidden', totalComp < totalItems);
+    }
+
+    function escapeHtml(text) {
+        return text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,86 @@
+/* ── Misiones ───────────────────────────── */
+.misiones-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+}
+.misiones-header h1 { font-size: 1.8rem; margin-bottom: .25rem; }
+.misiones-fecha { color: var(--text-muted); font-size: .9rem; }
+
+/* Progress bar */
+.progreso-bar-wrap { margin-bottom: 1.5rem; }
+.progreso-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: .85rem;
+    color: var(--text-muted);
+    margin-bottom: .4rem;
+}
+.progreso-bar {
+    height: 8px;
+    background: var(--border);
+    border-radius: 99px;
+    overflow: hidden;
+}
+.progreso-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #b76461, #6f9f93);
+    border-radius: 99px;
+    transition: width .4s ease;
+}
+
+/* Misiones lista */
+.misiones-lista { display: flex; flex-direction: column; gap: .75rem; margin-bottom: 1.5rem; }
+
+.mision-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    cursor: pointer;
+    transition: all .2s;
+    user-select: none;
+}
+.mision-item:hover { border-color: #b76461; background: #252b2c; }
+.mision-item.completada {
+    border-color: #22c55e;
+    background: rgba(34,197,94,.06);
+    opacity: .75;
+}
+.mision-item.completada .mision-texto {
+    text-decoration: line-through;
+    color: var(--text-muted);
+}
+.check-icon { font-size: 1.3rem; }
+.mision-texto { font-size: .95rem; line-height: 1.5; flex: 1; }
+
+/* Empty state */
+.misiones-empty {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--text-muted);
+}
+.empty-icon { font-size: 3rem; margin-bottom: 1rem; }
+.misiones-empty p { margin-bottom: .5rem; font-size: .95rem; }
+
+/* Felicitación */
+.felicitacion {
+    background: rgba(111,159,147,.15);
+    border: 1px solid rgba(111,159,147,.35);
+    color: #42776b;
+    padding: 1rem 1.5rem;
+    border-radius: var(--radius);
+    text-align: center;
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+/* Nav active */
+.nav-active { background: var(--primary); color: #fff !important; font-weight: 600; }

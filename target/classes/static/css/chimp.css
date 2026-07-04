@@ -1,0 +1,45 @@
+/* Chimp Test Styles */
+.chimp-board {
+    display: grid;
+    gap: 8px;
+    max-width: 560px;
+    margin: 0 auto 1.5rem;
+}
+.chimp-cell {
+    aspect-ratio: 1;
+    background: #ffffff;
+    border: 2px solid #e2e8e6;
+    border-radius: 12px;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #1f2929;
+    cursor: pointer;
+    transition: all .12s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    box-shadow: 0 3px 10px rgba(0,0,0,.08);
+}
+.chimp-cell:hover { border-color: #b76461; background: #fff7f6; }
+.chimp-cell.correcto   { background: rgba(111,159,147,.18);  border-color: #6f9f93; color: #42776b; }
+.chimp-cell.incorrecto { background: rgba(239,68,68,.14);  border-color: #ef4444; color: #b91c1c; }
+.chimp-cell.visible-num { background: rgba(183,100,97,.14); border-color: #b76461; color: #934c4a; }
+.chimp-cell.oculta { cursor: pointer; }
+
+.chimp-start-wrap {
+    display: flex;
+    justify-content: center;
+    margin-top: .5rem;
+}
+.btn-lg {
+    padding: .8rem 2.5rem;
+    font-size: 1.1rem;
+}
+
+/* level-up flash */
+@keyframes levelUp {
+    0%   { background: rgba(183,100,97,.3); }
+    100% { background: transparent; }
+}
+.level-flash { animation: levelUp .6s ease-out; }
