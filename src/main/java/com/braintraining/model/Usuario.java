@@ -30,6 +30,16 @@ public class Usuario {
     @Column(name = "fecha_reg")
     private LocalDateTime fechaReg = LocalDateTime.now();
 
+    @Lob
+    @Column(name = "foto", columnDefinition = "LONGBLOB")
+    private byte[] foto;
+
+    @Column(name = "foto_tipo", length = 100)
+    private String fotoTipo;
+
+    @Column(name = "descripcion", length = 500)
+    private String descripcion;
+
     public enum Rol { usuario, admin }
 
     // Constructors
@@ -63,4 +73,15 @@ public class Usuario {
 
     public LocalDateTime getFechaReg() { return fechaReg; }
     public void setFechaReg(LocalDateTime fechaReg) { this.fechaReg = fechaReg; }
+
+    public byte[] getFoto() { return foto; }
+    public void setFoto(byte[] foto) { this.foto = foto; }
+
+    public String getFotoTipo() { return fotoTipo; }
+    public void setFotoTipo(String fotoTipo) { this.fotoTipo = fotoTipo; }
+
+    public boolean isTieneFoto() { return foto != null && foto.length > 0; }
+
+    public String getDescripcion() { return descripcion; }
+    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
 }

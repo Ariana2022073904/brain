@@ -56,13 +56,14 @@
 
     <div class="nav-right">
 
-        <div class="nav-user-pill">
-            <span class="nav-avatar"
+        <a th:href="@{/perfil}" class="nav-user-pill" title="Editar perfil">
+            <img th:if="${usuario.tieneFoto}" th:src="@{/perfil/foto}" class="nav-avatar nav-avatar-img" alt="Foto de perfil">
+            <span th:unless="${usuario.tieneFoto}" class="nav-avatar"
                   th:text="${#strings.toUpperCase(#strings.substring(usuario.username,0,1))}">
             </span>
 
             <span th:text="${usuario.username}"></span>
-        </div>
+        </a>
 
         <form th:action="@{/logout}" method="post" style="display:inline">
             <button type="submit" class="btn-salir">

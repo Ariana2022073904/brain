@@ -52,15 +52,16 @@
 
     <div class="nav-right">
 
-        <div class="nav-user-pill">
+        <a th:href="@{/perfil}" class="nav-user-pill" title="Editar perfil">
 
-            <span class="nav-avatar"
+            <img th:if="${usuario.tieneFoto}" th:src="@{/perfil/foto}" class="nav-avatar nav-avatar-img" alt="Foto de perfil">
+            <span th:unless="${usuario.tieneFoto}" class="nav-avatar"
                   th:text="${#strings.substring(usuario.username,0,1).toUpperCase()}">
             </span>
 
             <span th:text="${usuario.username}"></span>
 
-        </div>
+        </a>
 
         <form th:action="@{/logout}" method="post">
 
@@ -102,17 +103,17 @@
 
             <div class="chart-card">
                 <h3>Chimp Test</h3>
-                <canvas id="chartChimp"></canvas>
+                <div class="chart-canvas"><canvas id="chartChimp"></canvas></div>
             </div>
 
             <div class="chart-card">
                 <h3>Torre de Hanoi</h3>
-                <canvas id="chartHanoi"></canvas>
+                <div class="chart-canvas"><canvas id="chartHanoi"></canvas></div>
             </div>
 
             <div class="chart-card">
                 <h3>Memoria de Cartas</h3>
-                <canvas id="chartCartas"></canvas>
+                <div class="chart-canvas"><canvas id="chartCartas"></canvas></div>
             </div>
 
         </div>
@@ -127,7 +128,7 @@
 
         <div class="chart-card chart-card-wide">
 
-            <canvas id="chartRanking"></canvas>
+            <div class="chart-canvas"><canvas id="chartRanking"></canvas></div>
 
         </div>
 
@@ -142,11 +143,11 @@
         <div class="charts-row">
 
             <div class="chart-card">
-                <canvas id="chartEdad"></canvas>
+                <div class="chart-canvas"><canvas id="chartEdad"></canvas></div>
             </div>
 
             <div class="chart-card">
-                <canvas id="chartEdadCount"></canvas>
+                <div class="chart-canvas"><canvas id="chartEdadCount"></canvas></div>
             </div>
 
         </div>
@@ -161,7 +162,7 @@
 
         <div class="chart-card chart-card-wide">
 
-            <canvas id="chartAgilidad"></canvas>
+            <div class="chart-canvas"><canvas id="chartAgilidad"></canvas></div>
 
         </div>
 
@@ -222,6 +223,14 @@ const chartDefaults = {
     }
 
 };
+
+// Chart.js modifica el objeto de opciones que recibe. Si varios gráficos
+// reutilizan la MISMA referencia de chartDefaults, un gráfico puede
+// corromper la configuración del siguiente. Por eso siempre se pasa
+// una copia nueva (clon) en cada gráfico.
+function cloneChartDefaults(){
+    return JSON.parse(JSON.stringify(chartDefaults));
+}
 
 
 /* =====================================================
@@ -309,9 +318,9 @@ function crearGraficoProgreso(canvas,data,color,invertido){
 
         },
 
-        options:Object.assign({},chartDefaults,{
+        options:Object.assign(cloneChartDefaults(),{
 
-            plugins:Object.assign({},chartDefaults.plugins,{
+            plugins:Object.assign(cloneChartDefaults().plugins,{
 
                 tooltip:{
 
@@ -396,7 +405,7 @@ fetch("/stats/api/ranking-global")
 
             },
 
-            options:chartDefaults
+            options:cloneChartDefaults()
 
         }
 
@@ -433,7 +442,7 @@ fetch("/stats/api/por-edad")
                 }]
             },
 
-            options:chartDefaults
+            options:cloneChartDefaults()
         }
 
     );
@@ -456,7 +465,7 @@ fetch("/stats/api/por-edad")
                 }]
             },
 
-            options:chartDefaults
+            options:cloneChartDefaults()
         }
 
     );
@@ -500,9 +509,30 @@ fetch("/stats/api/agilidad")
                     }]
                 },
 
-                options:Object.assign({},chartDefaults,{
-                    indexAxis:"y"
-                })
+                options:{
+                    responsive:true,
+                    maintainAspectRatio:false,
+                    indexAxis:"y",
+                    plugins:{
+                        legend:{
+                            labels:{
+                                color:'#4d5a5a',
+                                font:{ size:12 }
+                            }
+                        }
+                    },
+                    scales:{
+                        x:{
+                            beginAtZero:true,
+                            ticks:{ color:'#758181' },
+                            grid:{ color:'#e2e8e6' }
+                        },
+                        y:{
+                            ticks:{ color:'#758181' },
+                            grid:{ color:'#e2e8e6' }
+                        }
+                    }
+                }
             }
 
         );

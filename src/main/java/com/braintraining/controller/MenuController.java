@@ -45,6 +45,7 @@ public class MenuController {
         model.addAttribute("misRecords", misRecords);
         model.addAttribute("misJuegos", misJuegos);
         model.addAttribute("perfil", perfil);
+        model.addAttribute("activePage", "menu");
         return "menu";
     }
 
@@ -54,6 +55,7 @@ public class MenuController {
         model.addAttribute("todos", recordService.getTodosLosRecords());
         model.addAttribute("misRecords", recordService.getRecordsDelUsuario(usuario));
         model.addAttribute("usuario", usuario);
+        model.addAttribute("activePage", "records");
         return "records";
     }
 }

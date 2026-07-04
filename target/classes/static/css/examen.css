@@ -1,3 +1,12 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : 4 jul. 2026, 4:13:00 a. m.
+    Author     : FAMILIA
+*/
+
 .examen-container { display:flex; justify-content:center; align-items:center; min-height:100vh;
   background:linear-gradient(135deg,var(--bg),var(--bg3)); padding:1rem; }
 .examen-card { background:var(--card); border:1px solid var(--border); border-radius:var(--radius);

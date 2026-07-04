@@ -1,0 +1,79 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : 4 jul. 2026, 4:13:00 a. m.
+    Author     : FAMILIA
+*/
+
+.perfil-form {
+    max-width: 520px;
+    margin: 0 auto;
+}
+
+.foto-editor {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.foto-preview-wrap {
+    position: relative;
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 14px rgba(0,0,0,.15);
+}
+
+.foto-preview-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.foto-preview-wrap span {
+    color: #fff;
+    font-size: 2.4rem;
+    font-weight: 700;
+}
+
+.foto-editar-btn {
+    position: absolute;
+    right: 2px;
+    bottom: 2px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--primary-dk, #a5504d);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: 2px solid #fff;
+    font-size: .9rem;
+}
+
+.foto-hint {
+    margin-top: .6rem;
+    font-size: .8rem;
+    color: var(--text-muted);
+}
+
+.perfil-acciones {
+    display: flex;
+    justify-content: flex-end;
+    gap: .75rem;
+    margin-top: 1.5rem;
+}
+
+.nav-avatar-img {
+    object-fit: cover;
+}

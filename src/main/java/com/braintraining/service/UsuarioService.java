@@ -51,4 +51,39 @@ public class UsuarioService {
     public long contarUsuarios() {
         return usuarioRepository.count();
     }
+
+    /**
+     * Actualiza username, password, foto y descripción del usuario.
+     * @param nuevoUsername  nuevo username (puede ser igual al actual)
+     * @param nuevaPassword  nueva contraseña en texto plano, o null/vacío para no cambiarla
+     * @param fotoBytes      bytes de la nueva foto, o null para no cambiarla
+     * @param fotoTipo       content-type de la foto (image/png, image/jpeg, etc.)
+     * @param descripcion    descripción/bio del usuario, puede ser null o vacía
+     * @return el nombre de usuario final (puede haber cambiado)
+     * @throws IllegalArgumentException si el nuevo username ya está en uso por otro usuario
+     */
+    public String actualizarPerfil(Usuario usuario, String nuevoUsername, String nuevaPassword,
+                                    byte[] fotoBytes, String fotoTipo, String descripcion) {
+
+        if (nuevoUsername != null && !nuevoUsername.isBlank() && !nuevoUsername.equals(usuario.getUsername())) {
+            if (usuarioRepository.existsByUsername(nuevoUsername)) {
+                throw new IllegalArgumentException("Ese nombre de usuario ya está en uso.");
+            }
+            usuario.setUsername(nuevoUsername);
+        }
+
+        if (nuevaPassword != null && !nuevaPassword.isBlank()) {
+            usuario.setPassword(passwordEncoder.encode(nuevaPassword));
+        }
+
+        if (fotoBytes != null && fotoBytes.length > 0) {
+            usuario.setFoto(fotoBytes);
+            usuario.setFotoTipo(fotoTipo);
+        }
+
+        usuario.setDescripcion(descripcion);
+
+        usuarioRepository.save(usuario);
+        return usuario.getUsername();
+    }
 }

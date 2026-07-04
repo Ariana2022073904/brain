@@ -11,6 +11,10 @@
 </head>
 <body class="menu-body">
 
+<div th:if="${param.perfilOk}" class="alert alert-success" style="margin:1rem 2rem 0">
+    Perfil actualizado correctamente.
+</div>
+
 <!-- NAVBAR -->
 <nav class="navbar-visual">
     <div class="nav-left">
@@ -20,16 +24,18 @@
         </div>
     </div>
     <div class="nav-center">
-        <a th:href="@{/menu}"     class="nav-tab active">Juegos</a>
-        <a th:href="@{/misiones}" class="nav-tab">Misiones</a>
-        <a th:href="@{/records}"  class="nav-tab">Récords</a>
-        <a th:href="@{/stats}"    class="nav-tab">Stats</a>
+        <a th:href="@{/menu}"     class="nav-tab" th:classappend="${activePage == 'menu'} ? ' active' : ''">Juegos</a>
+        <a th:href="@{/misiones}" class="nav-tab" th:classappend="${activePage == 'misiones'} ? ' active' : ''">Misiones</a>
+        <a th:href="@{/records}"  class="nav-tab" th:classappend="${activePage == 'records'} ? ' active' : ''">Récords</a>
+        <a th:href="@{/stats}"    class="nav-tab" th:classappend="${activePage == 'stats'} ? ' active' : ''">Stats</a>
+        <a th:href="@{/perfil}"   class="nav-tab" th:classappend="${activePage == 'perfil'} ? ' active' : ''">Perfil</a>
     </div>
     <div class="nav-right">
-        <div class="nav-user-pill">
-            <span class="nav-avatar" th:text="${#strings.toUpperCase(#strings.substring(usuario.username,0,1))}"></span>
+        <a th:href="@{/perfil}" class="nav-user-pill" title="Editar perfil">
+            <img th:if="${usuario.tieneFoto}" th:src="@{/perfil/foto}" class="nav-avatar nav-avatar-img" alt="Foto de perfil">
+            <span th:unless="${usuario.tieneFoto}" class="nav-avatar" th:text="${#strings.toUpperCase(#strings.substring(usuario.username,0,1))}"></span>
             <span th:text="${usuario.username}"></span>
-        </div>
+        </a>
         <form th:action="@{/logout}" method="post" style="display:inline">
             <button type="submit" class="btn-salir">Salir</button>
         </form>

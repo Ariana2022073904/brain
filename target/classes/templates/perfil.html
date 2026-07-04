@@ -2,56 +2,134 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Perfil - Brain Training Pro</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" th:href="@{/css/menu-visual.css}">
+    <link rel="stylesheet" th:href="@{/css/perfil.css}">
 </head>
 <body class="menu-body">
 
-<!-- pega aquí el mismo navbar común -->
+<!-- NAVBAR -->
+<nav class="navbar-visual">
+    <div class="nav-left">
+        <div class="nav-logo">
+            <span class="nav-logo-icon">BT</span>
+            <span class="nav-logo-text">Brain Training Pro</span>
+        </div>
+    </div>
+    <div class="nav-center">
+        <a th:href="@{/menu}"     class="nav-tab" th:classappend="${activePage == 'menu'} ? ' active' : ''">Juegos</a>
+        <a th:href="@{/misiones}" class="nav-tab" th:classappend="${activePage == 'misiones'} ? ' active' : ''">Misiones</a>
+        <a th:href="@{/records}"  class="nav-tab" th:classappend="${activePage == 'records'} ? ' active' : ''">Récords</a>
+        <a th:href="@{/stats}"    class="nav-tab" th:classappend="${activePage == 'stats'} ? ' active' : ''">Stats</a>
+        <a th:href="@{/perfil}"   class="nav-tab" th:classappend="${activePage == 'perfil'} ? ' active' : ''">Perfil</a>
+    </div>
+    <div class="nav-right">
+        <a th:href="@{/perfil}" class="nav-user-pill" title="Editar perfil">
+            <img th:if="${usuario.tieneFoto}" th:src="@{/perfil/foto}" class="nav-avatar nav-avatar-img" alt="Foto de perfil">
+            <span th:unless="${usuario.tieneFoto}" class="nav-avatar" th:text="${#strings.toUpperCase(#strings.substring(usuario.username,0,1))}"></span>
+            <span th:text="${usuario.username}"></span>
+        </a>
+        <form th:action="@{/logout}" method="post" style="display:inline">
+            <button type="submit" class="btn-salir">Salir</button>
+        </form>
+    </div>
+</nav>
 
 <main class="menu-main">
+
     <div class="section-header">
-        <h2 class="section-title">Personalizar Perfil</h2>
+        <div>
+            <h2 class="section-title">Mi Perfil</h2>
+            <p class="section-hint">Edita tu nombre de usuario, contraseña, foto y descripción.</p>
+        </div>
     </div>
 
-    <form th:action="@{/perfil}" method="post" class="auth-card" style="max-width:620px">
-        <div class="form-group">
-            <label>Email</label>
-            <input type="email" name="email" th:value="${usuario.email}" required>
+    <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+    <form th:action="@{/perfil}" method="post" enctype="multipart/form-data" class="auth-card perfil-form">
+
+        <!-- FOTO -->
+        <div class="foto-editor">
+            <div class="foto-preview-wrap">
+                <img id="fotoPreview"
+                     th:if="${usuario.tieneFoto}"
+                     th:src="@{/perfil/foto}"
+                     alt="Foto de perfil">
+                <span id="fotoPreviewLetra"
+                      th:unless="${usuario.tieneFoto}"
+                      th:text="${#strings.toUpperCase(#strings.substring(usuario.username,0,1))}"></span>
+                <label for="fotoInput" class="foto-editar-btn" title="Cambiar foto">✎</label>
+            </div>
+            <input type="file" id="fotoInput" name="foto" accept="image/*" style="display:none">
+            <p class="foto-hint">Haz clic en el lápiz para subir una nueva foto</p>
         </div>
 
         <div class="form-group">
-            <label>Edad</label>
-            <input type="number" name="edad" th:value="${usuario.edad}" min="5" max="120" required>
+            <label>Nombre de usuario</label>
+            <input type="text" name="username" th:value="${usuario.username}" required maxlength="50">
         </div>
 
         <div class="form-group">
-            <label>Objetivo</label>
-            <select name="objetivo" class="select-control" required>
-                <option th:selected="${perfil.objetivo == 'Mejorar memoria'}">Mejorar memoria</option>
-                <option th:selected="${perfil.objetivo == 'Mejorar concentración'}">Mejorar concentración</option>
-                <option th:selected="${perfil.objetivo == 'Entrenar lógica y razonamiento'}">Entrenar lógica y razonamiento</option>
-                <option th:selected="${perfil.objetivo == 'Prevenir deterioro cognitivo'}">Prevenir deterioro cognitivo</option>
-            </select>
+            <label>Nueva contraseña</label>
+            <input type="password" name="password" placeholder="Dejar en blanco para no cambiarla" minlength="6">
         </div>
 
         <div class="form-group">
-            <label>Nivel de experiencia</label>
-            <select name="nivelExperiencia" class="select-control" required>
-                <option th:selected="${perfil.nivelExperiencia == 'Principiante'}">Principiante</option>
-                <option th:selected="${perfil.nivelExperiencia == 'Intermedio'}">Intermedio</option>
-                <option th:selected="${perfil.nivelExperiencia == 'Avanzado'}">Avanzado</option>
-            </select>
+            <label>Descripción</label>
+            <textarea name="descripcion" rows="4" maxlength="500"
+                      placeholder="Cuéntanos algo sobre ti (opcional)"
+                      th:text="${usuario.descripcion}"></textarea>
         </div>
 
-        <button type="submit" class="btn btn-primary">Guardar cambios</button>
-
-        <div th:if="${param.ok}" class="alert alert-success" style="margin-top:1rem">
-            Perfil actualizado correctamente.
+        <div class="perfil-acciones">
+            <a th:href="@{/menu}" class="btn btn-secondary">Cancelar</a>
+            <button type="submit" class="btn btn-primary">Guardar cambios</button>
         </div>
+
     </form>
 </main>
+
+<script>
+
+    var fotoInput=document.getElementById("fotoInput");
+
+    fotoInput.addEventListener("change",function(){
+
+        var archivo=fotoInput.files[0];
+        if(!archivo){
+            return;
+        }
+
+        var lector=new FileReader();
+
+        lector.onload=function(evento){
+
+            var wrap=document.querySelector(".foto-preview-wrap");
+            var img=document.getElementById("fotoPreview");
+            var letra=document.getElementById("fotoPreviewLetra");
+
+            if(!img){
+                img=document.createElement("img");
+                img.id="fotoPreview";
+                wrap.insertBefore(img,wrap.firstChild);
+            }
+
+            if(letra){
+                letra.style.display="none";
+            }
+
+            img.src=evento.target.result;
+            img.style.display="block";
+
+        };
+
+        lector.readAsDataURL(archivo);
+
+    });
+
+</script>
 
 </body>
 </html>
